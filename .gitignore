@@ -12,3 +12,13 @@ Saved
 *.suo
 *.xcodeproj
 *.xcworkspace
+.cquery
+.cquery_cached_index
+*.el
+CMakeLists.txt
+*.kdev4
+*.pri
+/build
+Makefile
+*.pro
+*.workspace
