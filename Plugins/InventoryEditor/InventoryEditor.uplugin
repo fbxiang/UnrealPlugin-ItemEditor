@@ -1,0 +1,28 @@
+{
+	  "FileVersion": 3,
+	  "Version": 1,
+	  "VersionName": "1.0",
+	  "FriendlyName": "InventoryEditor",
+	  "Description": "",
+	  "Category": "Other",
+	  "CreatedBy": "SphericalCat",
+	  "CreatedByURL": "",
+	  "DocsURL": "",
+	  "MarketplaceURL": "",
+	  "SupportURL": "",
+	  "CanContainContent": false,
+	  "IsBetaVersion": false,
+	  "Installed": false,
+	  "Modules": [
+        {
+            "Name": "Inventory",
+            "Type": "Runtime",
+            "LoadingPhase": "PreDefault"
+        },
+        {
+            "Name": "InventoryEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        }
+	  ]
+}
