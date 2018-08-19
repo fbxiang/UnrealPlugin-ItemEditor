@@ -17,7 +17,7 @@
 #include "Item/ItemDatabase.h"
 #include "ItemEditor.generated.h"
 
-class FItemEditor : public FAssetEditorToolkit, public FGCObject
+class FItemEditor : public FAssetEditorToolkit, public FGCObject, public FEditorUndoClient
 {
 public:
   FItemEditor();
@@ -49,9 +49,15 @@ protected:
 
   UItem* ItemBeingEdited;
 
+  virtual void PostRedo(bool bSuccess) override;
+  virtual void PostUndo(bool bSuccess) override;
+
 protected:
   TSharedRef<SDockTab> SpawnTab_Details(const FSpawnTabArgs& Args);
   TSharedRef<SDockTab> SpawnTab_Database(const FSpawnTabArgs& Args);
+
+
+  TSharedPtr<class SItemDatabaseTabBody> DatabaseTabBodyPtr;
 
   static const FName DatabaseTabId;
   static const FName DetailsTabId;

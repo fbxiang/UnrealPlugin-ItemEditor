@@ -189,6 +189,11 @@ public:
     // RefreshView();
   }
 
+  void RefreshView() {
+    UpdateCategoryList();
+    ItemTreeView->RequestTreeRefresh();
+  }
+
 private:
 
   TArray<URowDataWrapper*> CategoryList;
@@ -203,11 +208,6 @@ private:
         CategoryList[i] = newCategory;
       }
     }
-  }
-
-  void RefreshView() {
-    UpdateCategoryList();
-    ItemTreeView->RequestTreeRefresh();
   }
 
   TSharedPtr< STreeView<URowDataWrapper*> > ItemTreeView;
@@ -322,7 +322,9 @@ void SItemDatabaseRowContent::OnTextCommitted(const FText& InText, ETextCommit::
   }
 }
 
-FItemEditor::FItemEditor() : ItemBeingEdited(nullptr) {}
+FItemEditor::FItemEditor() : ItemBeingEdited(nullptr) {
+  GEditor->RegisterForUndo(this);
+}
 
 void FItemEditor::InitItemEditor(const EToolkitMode::Type Mode, const TSharedPtr< class IToolkitHost >& InitToolkitHost, class UItemDatabase* InItemDatabase ) {
   ItemDatabase = InItemDatabase;
@@ -381,11 +383,12 @@ TSharedRef<SDockTab> FItemEditor::SpawnTab_Details(const FSpawnTabArgs& Args)
 TSharedRef<SDockTab> FItemEditor::SpawnTab_Database(const FSpawnTabArgs& Args)
 {
   TSharedPtr<FItemEditor> ItemEditorPtr = SharedThis(this);
+  DatabaseTabBodyPtr = SNew(SItemDatabaseTabBody, ItemEditorPtr);
 
   return SNew(SDockTab)
     .Label(LOCTEXT("ItemDatabaseTab_Title", "Item Database"))
     [
-     SNew(SItemDatabaseTabBody, ItemEditorPtr)
+     DatabaseTabBodyPtr.ToSharedRef()
      ];
 }
 
@@ -433,6 +436,18 @@ FLinearColor FItemEditor::GetWorldCentricTabColorScale() const
 void FItemEditor::AddReferencedObjects( FReferenceCollector& Collector )
 {
   Collector.AddReferencedObject(ItemDatabase);
+}
+
+void FItemEditor::PostUndo(bool bSuccess) {
+  if (DatabaseTabBodyPtr.IsValid()) {
+    DatabaseTabBodyPtr->RefreshView();
+  }
+}
+
+void FItemEditor::PostRedo(bool bSuccess) {
+  if (DatabaseTabBodyPtr.IsValid()) {
+    DatabaseTabBodyPtr->RefreshView();
+  }
 }
 
 #undef LOCTEXT_NAMESPACE
