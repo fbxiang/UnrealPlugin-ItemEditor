@@ -8,7 +8,6 @@ public class InventoryEditor : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				"InventoryEditor/Public"
 				// ... add public include paths required here ...
 			}
 			);
@@ -16,7 +15,6 @@ public class InventoryEditor : ModuleRules
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				"InventoryEditor/Private",
 				// ... add other private include paths required here ...
 			}
 			);
@@ -34,18 +32,18 @@ public class InventoryEditor : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Projects",
-				"InputCore",
-				"UnrealEd",
-				"LevelEditor",
-				"CoreUObject",
-				"Engine",
-				"Slate",
-				"SlateCore",
-        "KismetWidgets",
-        "AssetTools",
-        "Inventory"
-				// ... add private dependencies that you statically link with here ...	
+          "Projects",
+          "InputCore",
+          "UnrealEd",
+          "LevelEditor",
+          "CoreUObject",
+          "Engine",
+          "Slate",
+          "SlateCore",
+          "KismetWidgets",
+          "AssetTools",
+          "Inventory"
+          // ... add private dependencies that you statically link with here ...	
 			}
 			);
 		

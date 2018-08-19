@@ -15,8 +15,7 @@
 
 #include "Item/Item.h"
 #include "Item/ItemDatabase.h"
-#include "Item/ItemBase.h"
-
+#include "ItemEditor.generated.h"
 
 class FItemEditor : public FAssetEditorToolkit, public FGCObject
 {
@@ -58,3 +57,40 @@ protected:
   static const FName DetailsTabId;
 };
 
+
+UCLASS()
+class URowDataWrapper : public UObject {
+  GENERATED_BODY()
+
+  public:
+  virtual FText GetDisplayText() { return FText::GetEmpty(); }
+};
+
+UCLASS()
+class URowDataWrapperItem : public URowDataWrapper {
+  GENERATED_BODY()
+  public:
+  UItem* Item;
+
+  virtual FText GetDisplayText() {
+    if (Item) {
+      return Item->GetDisplayText();
+    }
+    return FText::GetEmpty();
+  }
+};
+
+UCLASS()
+class URowDataWrapperCategory : public URowDataWrapper {
+  GENERATED_BODY()
+
+  public:
+  UItemCategory* Category;
+
+  virtual FText GetDisplayText() {
+    if (Category) {
+      return Category->GetDisplayText();
+    }
+    return FText::GetEmpty();
+  }
+};

@@ -2,14 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Item/Item.h"
-#include "Item/ItemBase.h"
 #include "Misc/ITransaction.h"
 #include "ItemDatabase.generated.h"
 
 extern CORE_API ITransaction* GUndo;
 
 UCLASS()
-class UItemCategory : public UItemBase {
+class UItemCategory : public UObject {
   GENERATED_UCLASS_BODY()
 public:
   UFUNCTION()
@@ -25,9 +24,9 @@ public:
   void DeleteItem(UItem* Item) { Items.Remove(Item); }
   
 
-  virtual FText GetDisplayText() override { return FText::FromName(CategoryName); }
-  virtual FText GetTooltipText() override { return FText::GetEmpty(); }
-  virtual void  GetChildren(TArray<UItemBase*>& OutChildren) override { OutChildren.Append(Items); }
+  FText GetDisplayText() { return FText::FromName(CategoryName); }
+  FText GetTooltipText() { return FText::GetEmpty(); }
+  void  GetChildren(TArray<UItem*>& OutChildren) { OutChildren.Append(Items); }
 
 protected:
   UPROPERTY()

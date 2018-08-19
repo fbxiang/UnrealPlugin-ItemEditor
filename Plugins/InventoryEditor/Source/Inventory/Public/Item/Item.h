@@ -2,13 +2,12 @@
 
 #include "Object.h"
 #include "Tuple.h"
-#include "Item/ItemBase.h"
 #include "Styling/SlateBrush.h"
 #include "Item.generated.h"
 
 
 UCLASS(Blueprintable)
-class UItem : public UItemBase {
+class UItem : public UObject {
   GENERATED_BODY()
   public:
 
