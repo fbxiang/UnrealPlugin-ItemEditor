@@ -1,9 +1,13 @@
 #include "InventoryEditor.h"
+#include "InventoryEditorStyle.h"
 
 void FInventoryEditorModule::StartupModule() {
   IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
   RegisterAssetTypeAction(AssetTools, MakeShareable(new FItemDatabaseAssetActions(EAssetTypeCategories::Type::Misc)));
+
+  // Register slate style
+  FInventoryEditorStyle::Initialize();
 
   // TODO: Add property changed
   // OnPropertyChangedDelegateHandle = FCoreUObjectDelegates::OnObjectPropertyChanged.AddRaw(this, &FInventoryEditorModule::OnPropertyChanged);
@@ -23,6 +27,9 @@ void FInventoryEditorModule::ShutdownModule() {
       }
   }
   CreatedAssetTypeActions.Empty();
+
+  // Unregister slate style
+  FInventoryEditorStyle::Shutdown();
 }
 
 void FInventoryEditorModule::RegisterAssetTypeAction(IAssetTools& AssetTools, TSharedRef<IAssetTypeActions> Action)

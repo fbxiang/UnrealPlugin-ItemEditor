@@ -1,0 +1,7 @@
+#!/bin/bash
+UE_HOME=/home/fx/UnrealEngine
+
+CURR_DIR=`pwd`
+PROJ_NAME="PluginHost"
+
+$UE_HOME/GenerateProjectFiles.sh -project="${CURR_DIR}/${PROJ_NAME}.uproject" -game -engine -vscode

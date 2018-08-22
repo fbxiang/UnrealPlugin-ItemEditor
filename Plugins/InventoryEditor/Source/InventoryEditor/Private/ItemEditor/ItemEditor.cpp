@@ -1,4 +1,5 @@
 #include "ItemEditor.h"
+#include "InventoryEditorStyle.h"
 
 #define LOCTEXT_NAMESPACE "ItemEditor"
 
@@ -81,7 +82,8 @@ public:
           .ToolTipText(LOCTEXT("AddItemTooltip", "Add a new item to the category"))
           [
            SNew(SImage)
-           .Image(FEditorStyle::Get().GetBrush("Plus"))]
+           .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.AddItemImage"))
+           ]
           ]
          +SHorizontalBox::Slot()
          .AutoWidth()
@@ -96,7 +98,8 @@ public:
           .ToolTipText(LOCTEXT("RemoveCategoryTooltip", "Remove this category"))
           [
            SNew(SImage)
-           .Image(FEditorStyle::Get().GetBrush("Minus"))]
+           .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.RemoveItemImage"))
+           ]
           ]
          ];
     } else {
@@ -172,7 +175,7 @@ public:
           .ToolTipText(LOCTEXT("AddItemTooltip", "Add a new item to the database"))
           [
            SNew(SImage)
-           .Image(FEditorStyle::Get().GetBrush("Plus"))
+           .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.AddItemImage"))
            ]
           ]
          ]
