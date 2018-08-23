@@ -22,7 +22,18 @@ public:
 
   UFUNCTION()
   void DeleteItem(UItem* Item) { Items.Remove(Item); }
-  
+
+  UFUNCTION()
+  bool Contains(UItem* Item) { return Items.Contains(Item); }
+
+  void MoveUpItem(UItem* Item) {
+    int32 index = Items.Find(Item);
+    if (index != INDEX_NONE && index != 0) {
+      UItem* other = Items[index - 1];
+      Items[index - 1] = Items[index];
+      Items[index] = other;
+    }
+  }
 
   FText GetDisplayText() { return FText::FromName(CategoryName); }
   FText GetTooltipText() { return FText::GetEmpty(); }
@@ -46,11 +57,14 @@ public:
   UItemCategory* AddCategory();
 
   void DeleteCategory(UItemCategory* Category);
+  void MoveUpCategory(UItemCategory* Category);
 
   UItem* AddItemToCategory(FName CategoryName);
   UItem* AddItemToCategory(UItemCategory* Category);
 
   void RemoveItemFromCategory(UItemCategory* Category, UItem* Item);
+  void RemoveItem(UItem* Item);
+  void MoveUpItem(UItem* Item);
 
 private:
   UPROPERTY()

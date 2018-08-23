@@ -78,6 +78,22 @@ public:
           .ForegroundColor(FSlateColor::UseForeground())
           .HAlign(HAlign_Center)
           .VAlign(VAlign_Center)
+          .OnClicked(this, &SItemDatabaseRowContent::OnMoveUpClicked)
+          .ToolTipText(LOCTEXT("MoveUpCategoryTooltip", "Move this category up"))
+          [
+           SNew(SImage)
+           .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.MoveUpImage"))
+           ]
+          ]
+         +SHorizontalBox::Slot()
+         .AutoWidth()
+         .Padding(2.0f)
+         [
+          SNew(SButton)
+          .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+          .ForegroundColor(FSlateColor::UseForeground())
+          .HAlign(HAlign_Center)
+          .VAlign(VAlign_Center)
           .OnClicked(this, &SItemDatabaseRowContent::OnAddClicked)
           .ToolTipText(LOCTEXT("AddItemTooltip", "Add a new item to the category"))
           [
@@ -115,6 +131,38 @@ public:
           .Text(TAttribute<FText>::Create
                 (TAttribute<FText>::FGetter::CreateUObject(InRowDataWrapper, &URowDataWrapper::GetDisplayText)))
           ]
+         +SHorizontalBox::Slot()
+         .AutoWidth()
+         .Padding(2.0f)
+         [
+          SNew(SButton)
+          .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+          .ForegroundColor(FSlateColor::UseForeground())
+          .HAlign(HAlign_Center)
+          .VAlign(VAlign_Center)
+          .OnClicked(this, &SItemDatabaseRowContent::OnMoveUpClicked)
+          .ToolTipText(LOCTEXT("MoveUpItemTooltip", "Move item up"))
+          [
+           SNew(SImage)
+           .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.MoveUpImage"))
+           ]
+          ]
+         +SHorizontalBox::Slot()
+         .AutoWidth()
+         .Padding(2.0f)
+         [
+          SNew(SButton)
+          .ButtonStyle(FEditorStyle::Get(), "HoverHintOnly")
+          .ForegroundColor(FSlateColor::UseForeground())
+          .HAlign(HAlign_Center)
+          .VAlign(VAlign_Center)
+          .OnClicked(this, &SItemDatabaseRowContent::OnDeleteClicked)
+          .ToolTipText(LOCTEXT("RemoveItemTooltip", "Remove this item"))
+          [
+           SNew(SImage)
+           .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.RemoveItemImage"))
+           ]
+          ]
          ];
     }
   }
@@ -124,6 +172,7 @@ private:
 
   FReply OnDeleteClicked();
   FReply OnAddClicked();
+  FReply OnMoveUpClicked();
   bool IsSelected();
   void OnTextCommitted(const FText& InText, ETextCommit::Type InType);
 };
@@ -187,13 +236,29 @@ public:
         ]
        ];
   }
-  void Tick (const FGeometry & AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override {
-    SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
-    // RefreshView();
-  }
+
+  // void Tick (const FGeometry & AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override {
+  //   SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+  // }
 
   void RefreshView() {
+    TSet<UItemCategory*> ExpandedCategories;
+    for (int32 i = 0; i < CategoryList.Num(); i++) {
+      if (ItemTreeView->IsItemExpanded(CategoryList[i])) {
+        ExpandedCategories.Add(static_cast<URowDataWrapperCategory*>(CategoryList[i])->Category);
+      }
+    }
+
     UpdateCategoryList();
+
+    for (int32 i = 0; i < CategoryList.Num(); i++) {
+      if (ExpandedCategories.Contains(static_cast<URowDataWrapperCategory*>(CategoryList[i])->Category)) {
+        ItemTreeView->SetItemExpansion(CategoryList[i], true);
+      } else {
+        ItemTreeView->SetItemExpansion(CategoryList[i], false);
+      }
+    }
+
     ItemTreeView->RequestTreeRefresh();
   }
 
@@ -202,6 +267,7 @@ private:
   TArray<URowDataWrapper*> CategoryList;
   void UpdateCategoryList() {
     if (ItemEditorPtr.IsValid()) {
+
       UItemDatabase* database = ItemEditorPtr.Pin()->GetItemDatabase();
       TArray<UItemCategory*> categories = database->GetCategoryList();
       CategoryList.SetNum(categories.Num());
@@ -270,7 +336,7 @@ private:
         ItemEditorPtr.Pin()->GetItemDatabase()->DeleteCategory(static_cast<URowDataWrapperCategory*>(RowDataWrapper)->Category);
       }
     } else {
-      // delete item
+      ItemEditorPtr.Pin()->GetItemDatabase()->RemoveItem(static_cast<URowDataWrapperItem*>(RowDataWrapper)->Item);
     }
     RefreshView();
   }
@@ -283,6 +349,18 @@ private:
       } 
     } else {
       // ignore
+    }
+    RefreshView();
+  }
+
+  void OnMoveUpClicked(URowDataWrapper* RowDataWrapper)
+  {
+    if (RowDataWrapper->IsA(URowDataWrapperCategory::StaticClass())) {
+      if (ItemEditorPtr.IsValid()) {
+        ItemEditorPtr.Pin()->GetItemDatabase()->MoveUpCategory(static_cast<URowDataWrapperCategory*>(RowDataWrapper)->Category);
+      } 
+    } else {
+      ItemEditorPtr.Pin()->GetItemDatabase()->MoveUpItem(static_cast<URowDataWrapperItem*>(RowDataWrapper)->Item);
     }
     RefreshView();
   }
@@ -312,6 +390,13 @@ FReply SItemDatabaseRowContent::OnAddClicked() {
   return FReply::Handled();
 }
 
+FReply SItemDatabaseRowContent::OnMoveUpClicked() {
+  if (ParentPtr.IsValid()) {
+    ParentPtr.Pin()->OnMoveUpClicked(RowDataWrapper);
+  }
+  return FReply::Handled();
+}
+
 bool SItemDatabaseRowContent::IsSelected() {
   if (ParentPtr.IsValid()) {
     return ParentPtr.Pin()->ItemSelected == RowDataWrapper;
@@ -332,7 +417,6 @@ FItemEditor::FItemEditor() : ItemBeingEdited(nullptr) {
 void FItemEditor::InitItemEditor(const EToolkitMode::Type Mode, const TSharedPtr< class IToolkitHost >& InitToolkitHost, class UItemDatabase* InItemDatabase ) {
   ItemDatabase = InItemDatabase;
   // TODO: Register Editor Commands
-  // TODO: Set up editor styles
 
   const TSharedRef<FTabManager::FLayout> StandaloneDefaultLayout = FTabManager::NewLayout("Standalone_ItemEditor_Layout_v1")
     ->AddArea

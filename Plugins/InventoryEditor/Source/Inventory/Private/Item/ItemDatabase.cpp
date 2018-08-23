@@ -27,6 +27,18 @@ void UItemDatabase::DeleteCategory(UItemCategory* Category) {
   GEditor->EndTransaction();
 }
 
+void UItemDatabase::MoveUpCategory(UItemCategory* Category) {
+  int32 index = ItemCategoryList.Find(Category);
+  if (index == 0) return;
+  GEditor->BeginTransaction(LOCTEXT("MoveUpCategory", "Move Category"));
+  Modify();
+  UItemCategory* other = ItemCategoryList[index-1];
+  ItemCategoryList[index-1] = ItemCategoryList[index];
+  ItemCategoryList[index] = other;
+  GEditor->EndTransaction();
+}
+
+
 UItem* UItemDatabase::AddItemToCategory(FName CategoryName) {
   return AddItemToCategory(FindCategory(CategoryName));
 }
@@ -38,6 +50,7 @@ UItem* UItemDatabase::AddItemToCategory(UItemCategory* Category) {
 
   GEditor->BeginTransaction(LOCTEXT("AddItemToCategory", "Add item to category"));
   Category->Modify();
+  void RemoveItem(UItem* Item);
   Category->AddItem(newItem);
   GEditor->EndTransaction();
 
@@ -47,11 +60,41 @@ UItem* UItemDatabase::AddItemToCategory(UItemCategory* Category) {
 void UItemDatabase::RemoveItemFromCategory(UItemCategory* Category, UItem* Item) {
   if (!Category || !Item) return;
   
-  GEditor->BeginTransaction(LOCTEXT("AddItemToCategory", "Add item to category"));
+  GEditor->BeginTransaction(LOCTEXT("RemoveItemFromCategory", "Remove item from category"));
   Category->Modify();
   Category->DeleteItem(Item);
   GEditor->EndTransaction();
 }
+
+void UItemDatabase::RemoveItem(UItem* Item) {
+  if (!Item) return;
+  UItemCategory* category;
+  for (int32 i = 0; i < ItemCategoryList.Num(); i++) {
+    if (ItemCategoryList[i]->Contains(Item)) {
+      category = ItemCategoryList[i];
+    }
+  }
+  if (category) {
+    RemoveItemFromCategory(category, Item);
+  }
+}
+
+void UItemDatabase::MoveUpItem(UItem* Item) {
+  if (!Item) return;
+  UItemCategory* category;
+  for (int32 i = 0; i < ItemCategoryList.Num(); i++) {
+    if (ItemCategoryList[i]->Contains(Item)) {
+      category = ItemCategoryList[i];
+    }
+  }
+  if (category) {
+    GEditor->BeginTransaction(LOCTEXT("MoveUpItem", "Move item up"));
+    category->Modify();
+    category->MoveUpItem(Item);
+    GEditor->EndTransaction();
+  }
+}
+
 
 UItemCategory* UItemDatabase::FindCategory(FName CategoryName) {
   for (int32 i = 0; i < ItemCategoryList.Num(); i++) {

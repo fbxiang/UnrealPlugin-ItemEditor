@@ -32,12 +32,9 @@ void FInventoryEditorStyle::Initialize() {
 
   StyleSet = MakeShareable(new FSlateStyleSet(GetStyleSetName()));
 
-  // TODO: These look suspicious
-	// StyleSet->SetContentRoot(FPaths::EngineContentDir() / TEXT("Editor/Slate"));
-	// StyleSet->SetCoreContentRoot(FPaths::EngineContentDir() / TEXT("Slate"));
-
   StyleSet->Set("InventoryEditor.AddItemImage", new IMAGE_PLUGIN_BRUSH(TEXT("Icons/icon_AddItemIcon_16x"), Icon16x16));
   StyleSet->Set("InventoryEditor.RemoveItemImage", new IMAGE_PLUGIN_BRUSH(TEXT("Icons/icon_RemoveItemIcon_16x"), Icon16x16));
+  StyleSet->Set("InventoryEditor.MoveUpImage", new IMAGE_PLUGIN_BRUSH(TEXT("Icons/icon_MoveUpIcon_16x"), Icon16x16));
 
   FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
 }
