@@ -22,12 +22,9 @@ class FItemEditor : public FAssetEditorToolkit, public FGCObject, public FEditor
 public:
   FItemEditor();
 
-  // TODO: Handle Undo
-
   // IToolkit interface
   virtual void RegisterTabSpawners(const TSharedRef<class FTabManager>& TabManager) override;
 	virtual void UnregisterTabSpawners(const TSharedRef<class FTabManager>& TabManager) override;
-  // End IToolkit interface
 
 	// FAssetEditorToolkit
 	virtual FName GetToolkitFName() const override;
@@ -44,11 +41,11 @@ public:
   void InitItemEditor(const EToolkitMode::Type Mode, const TSharedPtr< class IToolkitHost >& InitToolkitHost, class UItemDatabase* InItemDatabase );
   
 protected:
-  UPROPERTY()
   UItemDatabase* ItemDatabase;
 
   UItem* ItemBeingEdited;
 
+  // FEditorUndoClient
   virtual void PostRedo(bool bSuccess) override;
   virtual void PostUndo(bool bSuccess) override;
 
@@ -80,7 +77,7 @@ class URowDataWrapperItem : public URowDataWrapper {
 
   virtual FText GetDisplayText() {
     if (Item) {
-      return Item->GetDisplayText();
+      return FText::Format(FTextFormat::FromString("{0} ({1})"), Item->DisplayName, FText::FromName(Item->UniqueName));
     }
     return FText::GetEmpty();
   }

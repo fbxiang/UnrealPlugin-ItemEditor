@@ -38,6 +38,16 @@ public:
   FText GetDisplayText() { return FText::FromName(CategoryName); }
   FText GetTooltipText() { return FText::GetEmpty(); }
   void  GetChildren(TArray<UItem*>& OutChildren) { OutChildren.Append(Items); }
+  UItem* FindItemByName(FName Name) {
+    for (int32 i = 0; i < Items.Num(); i++) {
+      if (Items[i]->UniqueName == Name) {
+        return Items[i];
+      }
+    }
+    return nullptr;
+  }
+
+  void SearchItems(FText Key, TArray<UItem*>& Out);
 
 protected:
   UPROPERTY()
@@ -66,11 +76,13 @@ public:
   void RemoveItem(UItem* Item);
   void MoveUpItem(UItem* Item);
 
+  UItem* FindItemByName(FName Name);
+
+  void SearchItems(FText Key, TArray<UItem*>& Out);
+
 private:
   UPROPERTY()
   TArray<UItemCategory*> ItemCategoryList;
 
   UItemCategory* FindCategory(FName CategoryName);
-
-  void SaveToUndoHistory(FName name);
 };

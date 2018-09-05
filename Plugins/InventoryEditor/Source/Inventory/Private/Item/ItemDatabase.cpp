@@ -105,4 +105,37 @@ UItemCategory* UItemDatabase::FindCategory(FName CategoryName) {
   return nullptr;
 }
 
+UItem* UItemDatabase::FindItemByName(FName Name) {
+  for (int32 i = 0; i < ItemCategoryList.Num(); i++) {
+    if (UItem* item = ItemCategoryList[i]->FindItemByName(Name)) {
+      return item;
+    }
+  }
+  return nullptr;
+}
+
+void UItemCategory::SearchItems(FText Key, TArray<UItem*>& Out) {
+  for (int32 i = 0; i < Items.Num(); i++) {
+    FString searchString = Key.ToString();
+    FString uniqueString = Items[i]->UniqueName.ToString();
+    FString displayString = Items[i]->DisplayName.ToString();
+
+    if (searchString.Len() == 0 ||
+        uniqueString.Contains(searchString,
+                              ESearchCase::Type::IgnoreCase,
+                              ESearchDir::Type::FromStart) ||
+        displayString.Contains(searchString,
+                               ESearchCase::Type::IgnoreCase,
+                               ESearchDir::Type::FromStart)) {
+      Out.Add(Items[i]);
+    }
+  }
+}
+
+void UItemDatabase::SearchItems(FText Key, TArray<UItem*>& Out) {
+  for (int32 i = 0; i < ItemCategoryList.Num(); ++i) {
+    ItemCategoryList[i]->SearchItems(Key, Out);
+  }
+}
+
 #undef LOCTEXT_NAMESPACE

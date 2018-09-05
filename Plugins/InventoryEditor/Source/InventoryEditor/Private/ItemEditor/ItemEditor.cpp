@@ -29,14 +29,6 @@ public:
     return nullptr;
   }
 
-  virtual TSharedRef<SWidget> PopulateSlot(TSharedRef<SWidget> PropertyEditorWidget) override {
-    return SNew(SVerticalBox)
-      +SVerticalBox::Slot()
-      .FillHeight(1)
-      [
-       PropertyEditorWidget
-       ];
-  }
 };
 
 
@@ -221,7 +213,7 @@ public:
           .HAlign(HAlign_Center)
           .VAlign(VAlign_Center)
           .OnClicked(this, &SItemDatabaseTabBody::OnAddClicked)
-          .ToolTipText(LOCTEXT("AddItemTooltip", "Add a new item to the database"))
+          .ToolTipText(LOCTEXT("AddCategoryTooltip", "Add a new category"))
           [
            SNew(SImage)
            .Image(FInventoryEditorStyle::Get()->GetBrush("InventoryEditor.AddItemImage"))
@@ -481,7 +473,7 @@ TSharedRef<SDockTab> FItemEditor::SpawnTab_Database(const FSpawnTabArgs& Args)
 
 void FItemEditor::RegisterTabSpawners(const TSharedRef<class FTabManager>& InTabManager)
 {
-  WorkspaceMenuCategory = InTabManager->AddLocalWorkspaceMenuCategory(LOCTEXT("WorkspaceMenu_Item Editor", "Item Editor"));
+  WorkspaceMenuCategory = InTabManager->AddLocalWorkspaceMenuCategory(LOCTEXT("WorkspaceMenu_ItemEditor", "Item Editor"));
   FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 
   InTabManager->RegisterTabSpawner(DatabaseTabId, FOnSpawnTab::CreateSP(this, &FItemEditor::SpawnTab_Database))
@@ -507,7 +499,7 @@ FName FItemEditor::GetToolkitFName() const
 
 FText FItemEditor::GetBaseToolkitName() const
 {
-	return LOCTEXT( "AppLabel", "Item Database Editor" );
+	return LOCTEXT( "Editor", "Item Database Editor" );
 }
 
 FString FItemEditor::GetWorldCentricTabPrefix() const

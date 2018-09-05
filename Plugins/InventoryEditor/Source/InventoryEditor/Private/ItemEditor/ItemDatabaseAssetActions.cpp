@@ -8,7 +8,7 @@ FItemDatabaseAssetActions::FItemDatabaseAssetActions(EAssetTypeCategories::Type 
 
 FText FItemDatabaseAssetActions::GetName() const
 {
-  return LOCTEXT("FItemDatabaseAssetActionsName", "ItemDatabase");
+  return LOCTEXT("FItemDatabaseAssetActionsName", "Item Database");
 }
 
 FColor FItemDatabaseAssetActions::GetTypeColor() const

@@ -11,8 +11,8 @@ class UItem : public UObject {
   GENERATED_BODY()
   public:
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
-  UTexture2D* HUDTexture;
+  // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+  // UTexture2D* HUDTexture;
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
   FName UniqueName;
@@ -32,11 +32,13 @@ class UItem : public UObject {
   UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
   int32 Height = 1;
 
-  FText GetDisplayText() { return FText::FromName(UniqueName); }
-  
-  FText GetTooltipText() { return FText::GetEmpty(); }
+  UPROPERTY(EditDefaultsOnly, Category = Appearance)
+  FSlateBrush TextureBrush;
 
-  // FSlateBrush* GetTextureBrush();
+  FText GetDisplayText();
+  
+  FText GetTooltipText();
+
+  FSlateBrush* GetTextureBrush();
 private:
-  // FSlateBrush TextureBrush;
 };
