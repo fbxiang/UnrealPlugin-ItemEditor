@@ -48,7 +48,6 @@ class UInventorySlotArray : public UObject {
 private:
   void RegenerateSlotsIfNeeded() {
     if (Slots.Num() != Width * Height) {
-      Slots.SetNum(0);
       Slots.SetNum(Width * Height);
       for (int32 i = 0; i < Width * Height; i++) {
         Slots[i] = NewObject<UInventorySlotElement>(this);

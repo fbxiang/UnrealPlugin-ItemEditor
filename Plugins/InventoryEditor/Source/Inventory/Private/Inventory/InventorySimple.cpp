@@ -111,7 +111,6 @@ void UInventorySimple::GetItemStackPositionsAndSizes(TArray<UItemStack*>& OutSta
     TMap<UItemStack*, FVector2D> stackPos;
     for (int r = 0; r < SlotArrays[i]->Height; r++) {
       for (int c = 0; c < SlotArrays[i]->Width; c++) {
-        UE_LOG(LogTemp, Warning, TEXT("SlotArray %d Height %d Width %d row %d col %d"), i, SlotArrays[i]->Height, SlotArrays[i]->Width, r, c);
         UItemStack* stack = SlotArrays[i]->GetItemStackAt(r, c);
         if (stack && !stackPos.Contains(stack)) {
           stackPos.Add(stack, FVector2D(c, r));
@@ -122,6 +121,39 @@ void UInventorySimple::GetItemStackPositionsAndSizes(TArray<UItemStack*>& OutSta
       OutStacks.Add(elem.Key);
       OutPositions.Add(Style.SlotArrayStartPosition[i] + elem.Value * Style.ArraySlotWidth);
       OutSize.Add(FVector2D(elem.Key->Item->Width, elem.Key->Item->Height)*Style.ArraySlotWidth);
+    }
+  }
+}
+
+void UInventorySimple::GetItemStackPositionsInSlotArrays(UItemStack* Stack, TArray<FVector2D>& OutPositions) {
+  for (int32 i = 0; i < SlotArrays.Num(); i++) {
+    if (!SlotArrays[i]) continue;
+
+    for (int32 r = 0; r < SlotArrays[i]->Height; r++) {
+      for (int32 c = 0; c < SlotArrays[i]->Width; c++) {
+        if (Stack == SlotArrays[i]->GetItemStackAt(r, c)) {
+          OutPositions.Add(Style.SlotArrayStartPosition[i] + FVector2D(c, r) * Style.ArraySlotWidth);
+        }
+      }
+    }
+  }
+}
+
+void UInventorySimple::SynchronizeStyle() {
+  if (Style.SlotStartPosition.Num() <= Slots.Num()) {
+    Style.SlotStartPosition.SetNum(Slots.Num());
+    Style.SlotSize.SetNum(Slots.Num());
+  } else {
+    for (int32 i = Style.SlotStartPosition.Num(); i < Slots.Num(); i++) {
+      Style.SlotStartPosition.Add(FVector2D(0, 0));
+      Style.SlotSize.Add(FVector2D(0, 0));
+    }
+  }
+  if (Style.SlotArrayStartPosition.Num() <= SlotArrays.Num()) {
+    Style.SlotArrayStartPosition.SetNum(SlotArrays.Num());
+  } else {
+    for (int32 i = Style.SlotArrayStartPosition.Num(); i < SlotArrays.Num(); i++) {
+      Style.SlotArrayStartPosition.Add(FVector2D(0, 0));
     }
   }
 }

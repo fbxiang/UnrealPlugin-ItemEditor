@@ -63,15 +63,25 @@ int32 SInventorySimple::OnPaint( const FPaintArgs& Args, const FGeometry& Allott
 
     if (ArrayHovered >= 0) {
       FVector2D size = FVector2D(style->ArraySlotWidth, style->ArraySlotWidth);
-      FSlateDrawElement::MakeBox(
-        OutDrawElements, LayerId,
-        AllottedGeometry.ToPaintGeometry(
-          style->SlotArrayStartPosition[ArrayHovered]+size*FVector2D(ColHovered, RowHovered),
-          size),
-        &style->SlotHoverImage,
-        ESlateDrawEffect::None,
-        FLinearColor(1.0f, 1.0f, 1.0f, 0.7f)
-      );
+      UItemStack* stack=InventoryPtr->GetItemStackFromSlotArray(ArrayHovered, RowHovered, ColHovered);
+
+      TArray<FVector2D> positions;
+      if (!stack) {
+        positions.Add(style->SlotArrayStartPosition[ArrayHovered] +
+                      size * FVector2D(ColHovered, RowHovered));
+      } else {
+        InventoryPtr->GetItemStackPositionsInSlotArrays(stack, positions);
+      }
+
+      for (auto& pos : positions) {
+        FSlateDrawElement::MakeBox(
+          OutDrawElements, LayerId,
+          AllottedGeometry.ToPaintGeometry(pos, size),
+          &style->SlotHoverImage,
+          ESlateDrawEffect::None,
+          FLinearColor(1.0f, 1.0f, 1.0f, 0.7f)
+        );
+      }
     }
 
     // draw item stacks

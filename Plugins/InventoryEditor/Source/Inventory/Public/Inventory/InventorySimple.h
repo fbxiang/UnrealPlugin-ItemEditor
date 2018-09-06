@@ -46,13 +46,10 @@ class UInventorySimple : public UInventoryBase {
   virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 
   void GetItemStackPositionsAndSizes(TArray<UItemStack*>& OutStacks, TArray<FVector2D>& OutPositions, TArray<FVector2D>& OutSize);
+  void GetItemStackPositionsInSlotArrays(UItemStack* Stack, TArray<FVector2D>& OutPositions);
 
 protected:
-  void SynchronizeStyle() {
-    Style.SlotStartPosition.SetNum(Slots.Num());
-    Style.SlotSize.SetNum(Slots.Num());
-    Style.SlotArrayStartPosition.SetNum(SlotArrays.Num());
-  }
+  void SynchronizeStyle();
 
   bool CheckSlot(int32 Index) {
     return Index >= 0 && Index < Slots.Num();
@@ -64,4 +61,3 @@ protected:
     return X >= 0 && Y >= 0 && X < array->Height && Y < array->Width;
   }
 };
-
